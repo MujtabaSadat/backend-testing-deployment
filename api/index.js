@@ -29,3 +29,5 @@ async function connectDB() {
 connectDB();
 
 module.exports = app;
+
+module.exports.handler = serverless(app);
