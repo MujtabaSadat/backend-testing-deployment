@@ -1,23 +1,46 @@
 const express = require("express");
 // const connectDB = require("./db");
+const serverless = require("serverless-http");
 
 // const albumRoutes = require("../routes/album");
 
 const app = express();
 
 app.use(express.json());
-
-// safe async init (DO NOT crash function)
-// connectDB().catch((err) => {
-//   console.error("DB init failed:", err.message);
-// });
-
-// routes
-// app.use("/albums", albumRoutes);
-
-// hello world
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.json({ message: "Hello from Vercel Express API!" });
 });
 
+let isConnected = false;
+
+async function connectToDatabase() {
+  if (isConnected) {
+    return;
+  }
+
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    isConnected = true;
+    console.log("MongoDB connected");
+  } catch (err) {
+    console.error("MongoDB connection error:", err);
+    throw err;
+  }
+}
+
+// Wrap all routes with DB connection
+app.use(async (req, res, next) => {
+  try {
+    await connectToDatabase();
+    next();
+  } catch (err) {
+    res.status(500).json({ error: "Database connection failed" });
+  }
+});
+
+// Export handler
 module.exports = app;
+module.exports.handler = serverless(app);
