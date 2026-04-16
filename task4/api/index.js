@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
-const app = require("../app");
-
+const app = express();
+require("dotenv").config();
+// Middleware
+app.use(cors());
+app.use(express.json());
 let isConnected = false;
 
 async function connectDB() {
