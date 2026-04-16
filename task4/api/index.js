@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const app = require("../app");
 const albumRoutes = require("../routes/album");
 
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
+
 app.use("/albums", albumRoutes);
 
 let isConnected = false;
