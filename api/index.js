@@ -1,6 +1,7 @@
 const express = require("express");
 // const connectDB = require("./db");
 const serverless = require("serverless-http");
+const Album = require("../routes/album");
 
 // const albumRoutes = require("../routes/album");
 
@@ -10,6 +11,8 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.json({ message: "Hello from Vercel Express API!" });
 });
+
+app.use("/api/albums", Album);
 
 let isConnected = false;
 
