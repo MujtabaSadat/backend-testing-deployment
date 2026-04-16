@@ -2,32 +2,49 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const serverless = require("serverless-http");
-
-// Middleware
 const app = express();
 require("dotenv").config();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Routes
 app.get("/", (req, res) => {
   res.json({ message: "Hello from Vercel Express API!" });
 });
+
+// MongoDB connection (reuse existing connection)
 let isConnected = false;
 
-async function connectDB() {
-  if (isConnected) return;
+async function connectToDatabase() {
+  if (isConnected) {
+    return;
+  }
 
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
     isConnected = true;
     console.log("MongoDB connected");
   } catch (err) {
-    console.error("DB error:", err);
+    console.error("MongoDB connection error:", err);
+    throw err;
   }
 }
 
-connectDB();
+// Wrap all routes with DB connection
+app.use(async (req, res, next) => {
+  try {
+    await connectToDatabase();
+    next();
+  } catch (err) {
+    res.status(500).json({ error: "Database connection failed" });
+  }
+});
 
+// Export handler
 module.exports = app;
-
 module.exports.handler = serverless(app);
