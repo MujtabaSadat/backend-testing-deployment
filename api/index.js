@@ -1,10 +1,11 @@
 const express = require("express");
 const app = express();
-
+const albumRoutes = require("./routes/albumRoutes");
 // Middleware
 app.use(express.json());
 
 // Health check / default route
+app.use("/albums", albumRoutes);
 app.get("/", (req, res) => {
   res.status(200).send("Hello World");
 });
