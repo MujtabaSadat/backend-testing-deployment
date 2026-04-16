@@ -3,31 +3,25 @@ const mongoose = require("mongoose");
 const MONGODB_URI =
   "mongodb+srv://mujtabasadat35_db_user:56bb8RP9_A_ZS8Y@cluster0.y4s6xu3.mongodb.net/backend_database?retryWrites=true&w=majority";
 
-let isConnected = false;
+let cached = global.mongoose;
 
-// ✅ async function
+if (!cached) {
+  cached = global.mongoose = { conn: null };
+}
+
 const connectDB = async () => {
-  if (isConnected) {
-    return mongoose;
-  }
+  if (cached.conn) return cached.conn;
 
   try {
-    await mongoose.connect(MONGODB_URI);
+    cached.conn = await mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000,
+    });
 
-    isConnected = true;
-    console.log("Connected to MongoDB");
+    console.log("MongoDB connected");
 
-    // Optional: list collections (debug only)
-    const collections = await mongoose.connection.db
-      .listCollections()
-      .toArray();
-
-    console.log("Collections in DB:");
-    collections.forEach((c) => console.log(`- ${c.name}`));
-
-    return mongoose;
+    return cached.conn;
   } catch (err) {
-    console.error("MongoDB connection error:", err);
+    console.error("MongoDB connection error:", err.message);
     throw err;
   }
 };

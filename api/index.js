@@ -1,14 +1,16 @@
 const express = require("express");
 const connectDB = require("./db");
 
-const albumRoutes = require("./routes/album");
+const albumRoutes = require("../routes/album");
 
 const app = express();
 
 app.use(express.json());
 
-// connect DB (async safe)
-connectDB();
+// safe async init (DO NOT crash function)
+connectDB().catch((err) => {
+  console.error("DB init failed:", err.message);
+});
 
 // routes
 app.use("/albums", albumRoutes);
