@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 const app = express();
+const cors = require("cors");
+const express = require("express");
+
 require("dotenv").config();
 // Middleware
 app.use(cors());
