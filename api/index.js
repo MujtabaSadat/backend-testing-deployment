@@ -1,19 +1,21 @@
 const express = require("express");
+const connectDB = require("./db");
+
+const albumRoutes = require("./routes/album");
+
 const app = express();
-const albumRoutes = require("./routes/albumRoutes");
-// Middleware
+
 app.use(express.json());
 
-// Health check / default route
+// connect DB (async safe)
+connectDB();
+
+// routes
 app.use("/albums", albumRoutes);
+
+// hello world
 app.get("/", (req, res) => {
-  res.status(200).send("Hello World");
+  res.send("Hello World");
 });
 
-// Optional test route
-app.get("/api", (req, res) => {
-  res.json({ message: "API is working" });
-});
-
-// IMPORTANT: export app for Vercel
 module.exports = app;
