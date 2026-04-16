@@ -1,12 +1,17 @@
-const mongoose = require("mongoose");
-const app = express();
-const cors = require("cors");
 const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const serverless = require("serverless-http");
 
-require("dotenv").config();
 // Middleware
+const app = express();
+require("dotenv").config();
 app.use(cors());
 app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.json({ message: "Hello from Vercel Express API!" });
+});
 let isConnected = false;
 
 async function connectDB() {
