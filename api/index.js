@@ -1,7 +1,7 @@
 const express = require("express");
 const connectDB = require("./db");
 
-const albumRoutes = require("../routes/album");
+// const albumRoutes = require("../routes/album");
 
 const app = express();
 
@@ -13,7 +13,7 @@ connectDB().catch((err) => {
 });
 
 // routes
-app.use("/albums", albumRoutes);
+// app.use("/albums", albumRoutes);
 
 // hello world
 app.get("/", (req, res) => {
